@@ -21,10 +21,8 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 
-namespace XafBlazorCustomTemplateSample.Blazor.Server.Templates
-{
-    public class CustomShowNavigationItemActionControl : ISingleChoiceActionControl
-    {
+namespace XafBlazorCustomTemplateSample.Blazor.Server.Templates {
+    public class CustomShowNavigationItemActionControl : ISingleChoiceActionControl {
         private ChoiceActionItemCollection choiceActionItems;
         private EventHandler<SingleChoiceActionControlExecuteEventArgs> execute;
         string IActionControl.ActionId => "ShowNavigationItem";
@@ -32,16 +30,14 @@ namespace XafBlazorCustomTemplateSample.Blazor.Server.Templates
         public IEnumerable<ChoiceActionItem> Items => choiceActionItems;
         public RenderFragment GetComponentContent(RenderFragment titleTemplate) => CustomShowNavigationItemActionControlComponent.Create(titleTemplate, this);
         void ISingleChoiceActionControl.SetChoiceActionItems(ChoiceActionItemCollection choiceActionItems) => this.choiceActionItems = choiceActionItems;
-        public void DoExecute(ChoiceActionItem choiceActionItem)
-        {
+        public void DoExecute(ChoiceActionItem choiceActionItem) {
             execute?.Invoke(this, choiceActionItem == null ? new SingleChoiceActionControlExecuteEventArgs() : new SingleChoiceActionControlExecuteEventArgs(choiceActionItem));
         }
-        event EventHandler<SingleChoiceActionControlExecuteEventArgs> ISingleChoiceActionControl.Execute
-        {
+        event EventHandler<SingleChoiceActionControlExecuteEventArgs> ISingleChoiceActionControl.Execute {
             add => execute += value;
             remove => execute -= value;
         }
-
+        
         void IActionControl.SetCaption(string caption) { }
         void IActionControl.SetConfirmationMessage(string confirmationMessage) { }
         void IActionControl.SetEnabled(bool enabled) { }
@@ -101,12 +97,9 @@ using DevExpress.Persistent.Base;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 
-namespace XafBlazorCustomTemplateSample.Blazor.Server.Templates
-{
-    public class CustomApplicationWindowTemplate : WindowTemplateBase, ISupportActionsToolbarVisibility, ISelectionDependencyToolbar
-    {
-        public CustomApplicationWindowTemplate()
-        {
+namespace XafBlazorCustomTemplateSample.Blazor.Server.Templates {
+    public class CustomApplicationWindowTemplate : WindowTemplateBase, ISupportActionsToolbarVisibility, ISelectionDependencyToolbar {
+        public CustomApplicationWindowTemplate() {
             NavigateBackActionControl = new NavigateBackActionControl();
             AddActionControl(NavigateBackActionControl);
             AccountComponent = new AccountComponentAdapter();
@@ -135,13 +128,11 @@ namespace XafBlazorCustomTemplateSample.Blazor.Server.Templates
         }
         protected override IEnumerable<IActionControlContainer> GetActionControlContainers() => Toolbar.ActionContainers;
         protected override RenderFragment CreateComponent() => CustomApplicationWindowTemplateComponent.Create(this);
-        protected override void BeginUpdate()
-        {
+        protected override void BeginUpdate() {
             base.BeginUpdate();
             ((ISupportUpdate)Toolbar).BeginUpdate();
         }
-        protected override void EndUpdate()
-        {
+        protected override void EndUpdate() {
             ((ISupportUpdate)Toolbar).EndUpdate();
             base.EndUpdate();
         }
