@@ -1,6 +1,10 @@
 # XAF Blazor - How to create a custom template
 
-This example demonstrates how to change the built-in navigation system (uses a [DxTreeView](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxTreeView?v=21.2) component) with a [DxMenu](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxMenu?v=21.2) component by following steps described at [How To: Create a Custom Blazor Application Template](https://docs.devexpress.com/eXpressAppFramework/403452/ui-construction/templates/in-blazor/custom-blazor-application-template?v=21.2).
+This example demonstrates how to change the built-in navigation system (uses a [DxTreeView](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxTreeView?v=21.2) component) with a [DxMenu](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxMenu?v=21.2) component. 
+
+![](./media/custom-blazor-template.png)
+
+Refer to the following article for details: [How To: Create a Custom Blazor Application Template](https://docs.devexpress.com/eXpressAppFramework/403452/ui-construction/templates/in-blazor/custom-blazor-application-template?v=21.2).
 
 <!-- default file list -->
 
