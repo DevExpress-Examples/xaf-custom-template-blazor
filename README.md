@@ -1,3 +1,7 @@
+<!-- default badges list -->
+![](https://img.shields.io/endpoint?url=https://codecentral.devexpress.com/api/v1/VersionRange/418973356/21.2.2%2B)
+[![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
+<!-- default badges end -->
 # XAF Blazor - How to create a custom template
 
 This example demonstrates how to change the built-in navigation system (uses a [DxTreeView](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxTreeView?v=21.2) component) with a [DxMenu](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxMenu?v=21.2) component. 
