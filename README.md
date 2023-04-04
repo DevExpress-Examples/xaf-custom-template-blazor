@@ -5,20 +5,17 @@
 <!-- default badges end -->
 # XAF Blazor - How to create a custom template
 
-This example demonstrates how to change the built-in navigation system (uses a [DxTreeView](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxTreeView?v=21.2) component) with a [DxMenu](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxMenu?v=21.2) component. 
+This example demonstrates how to change the built-in navigation system (uses a [DxAccordion](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxAccordion) or [DxTreeView](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxTreeView) component) with a [DxMenu](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxMenu) component. 
 
-![](./media/custom-blazor-template.png)
+![image](https://user-images.githubusercontent.com/14300209/229773773-9953318d-6524-41f2-b77a-a61d6e5a6f5c.png)
 
-Refer to the following article for details: [How To: Create a Custom Blazor Application Template](https://docs.devexpress.com/eXpressAppFramework/403452/ui-construction/templates/in-blazor/custom-blazor-application-template?v=21.2).
+Refer to the following article for details: [How To: Create a Custom Blazor Application Template](https://docs.devexpress.com/eXpressAppFramework/403452/ui-construction/templates/in-blazor/custom-blazor-application-template).
 
 <!-- default file list -->
 
 ## Files to Look At
 
-- [CustomShowNavigationItemActionControl.cs](./XafBlazorCustomTemplateSample.Blazor.Server/Templates/CustomShowNavigationItemActionControl.cs)
-- [CustomShowNavigationItemActionControlComponent.razor](./XafBlazorCustomTemplateSample.Blazor.Server/Templates/CustomShowNavigationItemActionControlComponent.razor)
-- [CustomApplicationWindowTemplate.cs](./XafBlazorCustomTemplateSample.Blazor.Server/Templates/CustomApplicationWindowTemplate.cs)
-- [CustomApplicationWindowTemplateComponent.razor](./XafBlazorCustomTemplateSample.Blazor.Server/Templates/CustomApplicationWindowTemplateComponent.razor)
-- [BlazorApplication.cs](./XafBlazorCustomTemplateSample.Blazor.Server/BlazorApplication.cs)
+- [CustomTemplate.Blazor.Server/Templates](./CS/EFCore/CustomTemplate/CustomTemplate.Blazor.Server/Templates/)
+
 
 <!-- default file list end --> 
