@@ -1,0 +1,20 @@
+﻿@using DevExpress.ExpressApp.Actions
+
+<DxMenu Data="@ActionControl.Items" ItemClick="@OnItemClick" HamburgerButtonPosition="MenuHamburgerButtonPosition.Left" CollapseItemsToHamburgerMenu="true">
+    <TitleTemplate>
+        @TitleTemplate
+    </TitleTemplate>
+    <DataMappings>
+        <DxMenuDataMapping Text="@nameof(ChoiceActionItem.Caption)" Children="@nameof(ChoiceActionItem.Items)" />
+    </DataMappings>
+</DxMenu>
+
+@code {
+    public static RenderFragment Create(RenderFragment titleTemplate, CustomShowNavigationItemActionControl actionControl) =>
+        @<CustomShowNavigationItemActionControlComponent TitleTemplate="@titleTemplate" ActionControl="@actionControl" />;
+    [Parameter]
+    public RenderFragment TitleTemplate { get; set; }
+    [Parameter]
+    public CustomShowNavigationItemActionControl ActionControl { get; set; }
+    private void OnItemClick(MenuItemClickEventArgs e) => ActionControl.DoExecute((ChoiceActionItem)e.ItemInfo.Data);
+}

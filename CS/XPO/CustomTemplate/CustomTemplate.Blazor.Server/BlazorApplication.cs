@@ -6,6 +6,8 @@ using DevExpress.ExpressApp.Security.ClientServer;
 using DevExpress.ExpressApp.SystemModule;
 using DevExpress.ExpressApp.Xpo;
 using CustomTemplate.Blazor.Server.Services;
+using CustomTemplate.Blazor.Server.Templates;
+using DevExpress.ExpressApp.Templates;
 
 namespace CustomTemplate.Blazor.Server;
 
@@ -23,6 +25,14 @@ public class CustomTemplateBlazorApplication : BlazorApplication {
         }
 #endif
     }
+
+    protected override IFrameTemplate CreateDefaultTemplate(TemplateContext context) {
+        if (context == TemplateContext.ApplicationWindow) {
+            return new CustomApplicationWindowTemplate() { AboutInfoString = AboutInfo.Instance.GetAboutInfoString(this) };
+        }
+        return base.CreateDefaultTemplate(context);
+    }
+
     private void CustomTemplateBlazorApplication_DatabaseVersionMismatch(object sender, DatabaseVersionMismatchEventArgs e) {
 #if EASYTEST
         e.Updater.Update();
