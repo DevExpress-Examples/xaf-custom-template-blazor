@@ -17,8 +17,15 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Templates\CustomApplicationWindowTemplateComponent.razor" />
+    <None Include="Templates\CustomShowNavigationItemActionControlComponent.razor" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="DevExpress.ExpressApp.Blazor" Version="22.2.4" />
     <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="22.2.4" />
     <PackageReference Include="DevExpress.ExpressApp.Validation.Blazor" Version="22.2.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CustomTemplate.Module\CustomTemplate.Module.csproj" />
   </ItemGroup>
 </Project>
