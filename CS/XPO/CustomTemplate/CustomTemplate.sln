@@ -3,10 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomTemplate.Module", "CustomTemplate.Module\CustomTemplate.Module.csproj", "{41C77D1A-62C9-4877-8E16-380D20C0507C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomTemplate.Blazor.Server", "CustomTemplate.Blazor.Server\CustomTemplate.Blazor.Server.csproj", "{7DC9550F-756E-4917-85E9-2C96272CE88F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomTemplate.Module", "CustomTemplate.Module\CustomTemplate.Module.csproj", "{41C77D1A-62C9-4877-8E16-380D20C0507C}"
+EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
