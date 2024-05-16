@@ -1,0 +1,103 @@
+﻿@using DevExpress.ExpressApp
+@using DevExpress.ExpressApp.Blazor
+@using DevExpress.ExpressApp.Blazor.Components
+@using DevExpress.ExpressApp.Blazor.Components.Models
+@using DevExpress.ExpressApp.Blazor.Templates
+@using DevExpress.ExpressApp.Utils
+@using Microsoft.JSInterop
+
+@inherits FrameTemplateComponentBase<CustomMainFormTemplate>
+
+<div id="main-window-template-component" class="app h-100 d-flex flex-column">
+    <SkipToMainContentLink/>
+    <ComponentModelObserver ComponentModel="@FrameTemplate.NavigateBackActionControl.ButtonModel">
+        <div role="banner" class="header d-flex flex-row shadow-sm navbar-dark flex-nowrap @DetailViewHeaderClass @NavigateBackActionHeaderClass">
+            <div class="d-flex align-items-center ps-2">
+                @FrameTemplate.CustomShowNavigationItemActionControl.GetComponentContent(@<ViewCaptionComponent WindowCaption="@FrameTemplate" />)
+            </div>
+            <div class="header-right-side w-100 overflow-hidden d-flex align-items-center px-2 px-sm-3">
+                @if(!FrameTemplate.IsTabbedMdi) {
+                    @FrameTemplate.NavigateBackActionControl.GetComponentContent();
+                }
+                <div role="heading" aria-level="1">
+                    @if(ActiveTemplate != null) {
+                        <ViewCaptionComponent WindowCaption="@ActiveTemplate" />
+                    }
+                </div>
+                <SizeModeContainer>
+                    @FrameTemplate.HeaderToolbar.GetComponentContent()
+                </SizeModeContainer>
+                <div class="d-flex ms-auto">
+                    @FrameTemplate.AccountComponent.GetComponentContent()
+                    <SettingsComponent />
+                </div>
+            </div>
+        </div>
+    </ComponentModelObserver>
+    <div class="xaf-flex-auto overflow-hidden d-flex">
+        @if(FrameTemplate.IsTabbedMdi) {
+            <div role="main" class="w-100 overflow-auto">
+                <SizeModeContainer>
+                    <ComponentModelObserver ComponentModel="@FrameTemplate.TabsModel">
+                        @FrameTemplate.TabsModel.GetComponentContent()
+                    </ComponentModelObserver>
+                </SizeModeContainer>
+            </div>
+        }
+        else {
+            <div id="main-view-content" role="main" class="main xaf-flex-auto overflow-hidden d-flex flex-column" tabindex="-1">
+                <SizeModeContainer>
+                    @if(FrameTemplate.IsActionsToolbarVisible && @FrameTemplate.Toolbar.ContainsVisibleActionControl()) {
+                        <div class="main-toolbar py-3 px-2 px-sm-3">@FrameTemplate.Toolbar.GetComponentContent()</div>
+                    }
+                    <div class="main-content xaf-flex-auto overflow-auto pb-3 px-2 px-sm-3">
+                        <ViewSiteComponent View="@FrameTemplate.View" />
+                    </div>
+                </SizeModeContainer>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    public static RenderFragment Create(CustomMainFormTemplate mainFormTemplate) => @<CustomMainFormTemplateComponent FrameTemplate="@mainFormTemplate" />;
+    private string DetailViewHeaderClass => FrameTemplate.View is DetailView ? "xaf-detail-view-header" : default;
+    private string NavigateBackActionHeaderClass => FrameTemplate.NavigateBackActionControl.Visible ? "xaf-show-navigate-back-action" : default;
+    private string HideNavigationBtnTitle => CaptionHelper.GetLocalizedText("VisualComponents/Header", "HideNavigationPane");
+    private string ShowNavigationBtnTitle => CaptionHelper.GetLocalizedText("VisualComponents/Header", "ShowNavigationPane");
+    private IWindowCaption ActiveTemplate => FrameTemplate.IsTabbedMdi ? FrameTemplate.ActiveTemplate : FrameTemplate;
+    private void UnsubscribeTemplateEvents() {
+        if(FrameTemplate is not null) {
+            FrameTemplate.ChildTemplatesChanged -= FrameTemplate_ChildTemplatesChanged;
+            FrameTemplate.TemplateClosed -= FrameTemplate_TemplateClosed;
+        }
+    }
+    private void FrameTemplate_TemplateClosed(object sender, DetailFormTemplateChangedEventArgs e) {
+        InvokeAsync(StateHasChanged);
+    }
+    private void FrameTemplate_ChildTemplatesChanged(object sender, EventArgs e) {
+        InvokeAsync(StateHasChanged);
+    }
+    protected override async Task InvokeAfterViewChangedJS() {
+        await JSRuntime.InvokeVoidAsync("xaf.closeSideBarIfMobile");
+        await base.InvokeAfterViewChangedJS();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            await JSRuntime.InvokeVoidAsync("xaf.initApplicationWindowTemplate");
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    protected override Task OnParametersSetAsync() {
+        if(FrameTemplate is not null) {
+            FrameTemplate.ChildTemplatesChanged += FrameTemplate_ChildTemplatesChanged;
+            FrameTemplate.TemplateClosed += FrameTemplate_TemplateClosed;
+        }
+        return base.OnParametersSetAsync();
+    }
+    public override Task SetParametersAsync(ParameterView parameters) {
+        UnsubscribeTemplateEvents();
+
+        return base.SetParametersAsync(parameters);
+    }
+}

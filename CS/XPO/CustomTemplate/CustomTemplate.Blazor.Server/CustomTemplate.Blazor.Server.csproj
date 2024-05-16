@@ -17,10 +17,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.ExpressApp.Blazor" Version="22.2.4" />
-    <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="22.2.4" />
-    <PackageReference Include="DevExpress.ExpressApp.Security.Xpo" Version="22.2.4" />
-    <PackageReference Include="DevExpress.ExpressApp.Validation.Blazor" Version="22.2.4" />
+    <PackageReference Include="DevExpress.ExpressApp.Blazor" Version="24.1.2-beta-24136" />
+    <PackageReference Include="DevExpress.ExpressApp.CodeAnalysis" Version="24.1.2-beta-24136" />
+    <PackageReference Include="DevExpress.ExpressApp.Security.Xpo" Version="24.1.2-beta-24136" />
+    <PackageReference Include="DevExpress.ExpressApp.Validation.Blazor" Version="24.1.2-beta-24136" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomTemplate.Module\CustomTemplate.Module.csproj" />
