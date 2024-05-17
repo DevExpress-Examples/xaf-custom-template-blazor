@@ -8,6 +8,7 @@ using DevExpress.ExpressApp.Xpo;
 using CustomTemplate.Blazor.Server.Services;
 using CustomTemplate.Blazor.Server.Templates;
 using DevExpress.ExpressApp.Templates;
+using DevExpress.ExpressApp.Blazor.SystemModule;
 
 namespace CustomTemplate.Blazor.Server;
 
@@ -28,7 +29,7 @@ public class CustomTemplateBlazorApplication : BlazorApplication {
 
     protected override IFrameTemplate CreateDefaultTemplate(TemplateContext context) {
         if (context == TemplateContext.ApplicationWindow) {
-            return new CustomApplicationWindowTemplate() { AboutInfoString = AboutInfo.Instance.GetAboutInfoString(this) };
+            return new CustomMainFormTemplate((IModelOptionsBlazor)Model.Options) { AboutInfoString = AboutInfo.Instance.GetAboutInfoString(this) };
         }
         return base.CreateDefaultTemplate(context);
     }
