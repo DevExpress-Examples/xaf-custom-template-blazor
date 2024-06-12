@@ -8,7 +8,7 @@
 
 This example demonstrates how to replace the built-in navigation system that uses a [DxAccordion](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxAccordion) or [DxTreeView](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxTreeView) component with a [DxMenu](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxMenu) component.
 
-![image](https://user-images.githubusercontent.com/14300209/229773773-9953318d-6524-41f2-b77a-a61d6e5a6f5c.png)
+![image](./xaf-blazor-custom-template-devexpress.png)
 
 Refer to the following help topic for instructions on how to create a custom template with a [DxMenu](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxMenu) component: [How To: Create a Custom Blazor Application Template](https://docs.devexpress.com/eXpressAppFramework/403452/ui-construction/templates/in-blazor/custom-blazor-application-template).
 
