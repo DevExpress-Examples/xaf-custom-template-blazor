@@ -17,8 +17,8 @@ using DevExpress.ExpressApp.Templates.ActionControls;
 using DevExpress.Persistent.Base;
 using Microsoft.AspNetCore.Components;
 
-namespace CustomTemplate.Blazor.Server.Templates; 
-public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISupportActionsToolbarVisibility, ISelectionDependencyToolbar, ISupportListEditorInlineActions, ISupportListEditorContextMenuActions, ITemplateToolbarProvider, ITabbedMdiMainFormTemplate {
+namespace CustomTemplate.Blazor.Server.Templates;
+public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, IOptimizeRender, ISupportActionsToolbarVisibility, ISelectionDependencyToolbar, ISupportListEditorInlineActions, ISupportListEditorContextMenuActions, ITemplateToolbarProvider, ITabbedMdiMainFormTemplate, ITabbedMdiMainFormTemplateClosing {
     public CustomMainFormTemplate() : this(null) { }
     public CustomMainFormTemplate(IModelOptionsBlazor modelOptions) {
         ModelOptionsBlazor = modelOptions;
@@ -44,7 +44,7 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
             TabsModel.RenderMode = TabsRenderMode.OnDemand;
             TabsModel.ScrollMode = TabsScrollMode.NavButtons;
             TabsModel.ActiveTabIndex = ActiveTemplateIndex;
-            TabsModel.ActiveTabIndexChanged = EventCallback.Factory.Create<int>(this, OnActiveTabIndexChanged);
+            TabsModel.ActiveTabIndexChanged = new EventCallback<int>(null, OnActiveTabIndexChanged);
             TabsModel.CssClass = "xaf-tabbed-mdi h-100";
             TabsModel.ChildContent = builder => {
                 foreach (var item in ChildTemplates) {
@@ -54,7 +54,6 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
             };
         }
         else {
-            IsActionsToolbarVisible = true;
             Toolbar = new DxToolbarAdapter(new DxToolbarModel());
             Toolbar.AddActionContainer(nameof(PredefinedCategory.ObjectsCreation));
             Toolbar.AddActionContainer(nameof(PredefinedCategory.RecordsNavigation), ToolbarItemAlignment.Right);
@@ -93,9 +92,11 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
             DxContextMenuAdapter.AddActionContainer(nameof(PredefinedCategory.Menu));
         }
     }
+    private int lockRaiseViewChangedEvents;
+    private bool containsPendingEvent;
     protected IModelOptionsBlazor ModelOptionsBlazor { get; set; }
     protected override IEnumerable<IActionControlContainer> GetActionControlContainers() {
-        if (IsTabbedMdi) {
+        if(IsTabbedMdi) {
             return HeaderToolbar.ActionContainers;
         }
         return Toolbar.ActionContainers.Union(HeaderToolbar.ActionContainers.Union(ListEditorActionColumnAdapter.ActionContainers.Union(DxContextMenuAdapter.ActionContainers)));
@@ -103,27 +104,37 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
     protected override RenderFragment CreateComponent() => CustomMainFormTemplateComponent.Create(this);
     protected override void BeginUpdate() {
         base.BeginUpdate();
+        lockRaiseViewChangedEvents++;
         ((ISupportUpdate)Toolbar)?.BeginUpdate();
+        ((ISupportUpdate)TabsModel)?.BeginUpdate();
     }
     protected override void EndUpdate() {
         ((ISupportUpdate)Toolbar)?.EndUpdate();
+        ((ISupportUpdate)TabsModel)?.EndUpdate();
         base.EndUpdate();
+        if(lockRaiseViewChangedEvents > 0) {
+            lockRaiseViewChangedEvents--;
+            if(lockRaiseViewChangedEvents == 0 && containsPendingEvent) {
+                containsPendingEvent = false;
+                RefreshTabs();
+            }
+        }
     }
     public void CloseViewTemplate(ITabbedMdiDetailFormTemplate childTemplate) {
         ChildTemplates.Remove(childTemplate);
         TemplateClosed?.Invoke(this, new DetailFormTemplateChangedEventArgs(childTemplate));
     }
     public void TryAddChildTemplate(ITabbedMdiDetailFormTemplate childTemplate) {
-        if (childTemplate is null) {
+        if(childTemplate is null) {
             return;
         }
-        if (!ChildTemplates.Contains(childTemplate)) {
+        if(!ChildTemplates.Contains(childTemplate)) {
             ChildTemplates.Add(childTemplate);
 
             childTemplate.Activated += ChildTemplate_Activated;
             childTemplate.Closed += ChildTemplate_Closed;
         }
-        SetActiveTemplateIndex(ChildTemplates.IndexOf(childTemplate));
+        SetActiveTemplate(childTemplate);
     }
 
     private void ChildTemplate_Activated(object sender, EventArgs e) {
@@ -134,14 +145,22 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
     }
 
     private void OnActiveTabIndexChanged(int index) {
-        if (index >= 0) {
+        if(index >= 0 && index < ChildTemplates.Count) {
             SetActiveTemplateIndex(index);
-
+            RefreshTabs();
             ActiveTemplateChanged?.Invoke(this, new DetailFormTemplateChangedEventArgs(ChildTemplates[index]));
         }
     }
     private void ChildTemplate_Closed(object sender, EventArgs e) {
         var childTemplate = (ITabbedMdiDetailFormTemplate)sender;
+
+        DetailFormTemplateClosingEventArgs detailFormTemplateClosingEventArgs = new DetailFormTemplateClosingEventArgs(childTemplate);
+        Closing?.Invoke(this, detailFormTemplateClosingEventArgs);
+
+        if(detailFormTemplateClosingEventArgs.Cancel) {
+            return;
+        }
+
         childTemplate.Closed -= ChildTemplate_Closed;
         childTemplate.Activated -= ChildTemplate_Activated;
 
@@ -149,21 +168,18 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
     }
 
     public void RemoveChildTemplate(ITabbedMdiDetailFormTemplate childTemplate) {
-        if (ChildTemplates.Contains(childTemplate)) {
-            ChildTemplates.Remove(childTemplate);
-
-            RefreshTabs();
-        }
+        ChildTemplates.Remove(childTemplate);
     }
     public void RefreshTabs() {
-        ChildTemplatesChanged?.Invoke(this, EventArgs.Empty);
+        if(lockRaiseViewChangedEvents == 0) {
+            ChildTemplatesChanged?.Invoke(this, EventArgs.Empty);
+        } else {
+            containsPendingEvent = true;
+        }
     }
     public void SetActiveTemplate(ITabbedMdiDetailFormTemplate childTemplate) {
         var activeIndex = ChildTemplates.IndexOf(childTemplate);
-
-        if (ActiveTemplateIndex != activeIndex) {
-            SetActiveTemplateIndex(activeIndex);
-        }
+        SetActiveTemplateIndex(activeIndex);
         RefreshTabs();
     }
     public void SetActiveTemplateIndex(int index) {
@@ -173,13 +189,12 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
     public int ActiveTemplateIndex { get; private set; } = 0;
     public ITabbedMdiDetailFormTemplate ActiveTemplate {
         get {
-            if (ActiveTemplateIndex >= 0 && ChildTemplates.Count > ActiveTemplateIndex) {
+            if(ActiveTemplateIndex >= 0 && ChildTemplates.Count > ActiveTemplateIndex) {
                 return ChildTemplates[ActiveTemplateIndex];
             }
             return null;
         }
     }
-    public bool IsActionsToolbarVisible { get; private set; }
     public NavigateBackActionControl NavigateBackActionControl { get; }
     public AccountComponentAdapter AccountComponent { get; }
     public ShowNavigationItemActionControl ShowNavigationItemActionControl => throw new NotSupportedException();
@@ -196,6 +211,11 @@ public class CustomMainFormTemplate : WindowTemplateBase, IMainFormTemplate, ISu
     public event EventHandler ChildTemplatesChanged;
     public event EventHandler<DetailFormTemplateChangedEventArgs> ActiveTemplateChanged;
     public event EventHandler<DetailFormTemplateChangedEventArgs> TemplateClosed;
+    public event EventHandler<DetailFormTemplateClosingEventArgs> Closing;
 
-    void ISupportActionsToolbarVisibility.SetVisible(bool isVisible) => IsActionsToolbarVisible = isVisible;
+    void ISupportActionsToolbarVisibility.SetVisible(bool isVisible) {
+        if(Toolbar is not null) {
+            Toolbar.Visible = isVisible;
+        }
+    }
 }
